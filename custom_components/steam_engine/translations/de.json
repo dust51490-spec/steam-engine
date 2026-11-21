@@ -1,0 +1,686 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Steam Engine",
+        "description": "Alle Einstellungen der Steam Engine. Später jederzeit unter Konfigurieren änderbar.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC erreichbar",
+              "wake_entity": "Einschalten mit",
+              "launch_unlocked": "Spiele ohne Sperre starten"
+            },
+            "data_description": {
+              "reachable_entity": "Binärsensor, der an ist, solange der PC läuft, z. B. ein Ping-Sensor.",
+              "wake_entity": "Knopf, Schalter oder Skript, der den PC einschaltet (Wake-on-LAN, Steckdose, Relais).",
+              "launch_unlocked": "Nur wenn ein Spiel aus Home Assistant gestartet wird, während der PC aus ist: Der PC wird eingeschaltet und die Sperre nach der automatischen Anmeldung einmal ausgelassen, damit das Spiel starten kann. Abwägung bei der Sicherheit: Bis du ihn sperrst, kann jeder am PC ihn benutzen. Der Hinweis für den PC gilt 10 Minuten."
+            }
+          },
+          "notify": {
+            "name": "Benachrichtigung",
+            "data": {
+              "notify_service": "Push an",
+              "push_kinds": "Pushes zu",
+              "quiet_auto_updates": "Automatische Updates still",
+              "link": "Link beim Antippen"
+            },
+            "data_description": {
+              "notify_service": "Benachrichtigungsdienst der Companion App, z. B. mobile_app_deinhandy (notify. davor ist egal). „Keine Pushes“: Es wird nichts gesendet, die Ereignisse für eigene Automationen bleiben.",
+              "push_kinds": "Antworten auf einen Knopf einer Push (z. B. „Löschen?“) kommen immer.",
+              "quiet_auto_updates": "Aufträge von Spielen mit automatischen Updates schicken während des Laufs und bei Erfolg keine Push. Eine Push kommt nur, wenn der Platz nicht reichte oder auch der zweite Versuch scheiterte. Die Update-Push lässt sie weg.",
+              "link": "Dashboard-Pfad, der beim Antippen der Push geöffnet wird."
+            }
+          },
+          "auto_off": {
+            "name": "Automatisch ausschalten (PC wurde von einer Automation geweckt)",
+            "data": {
+              "idle_minutes": "Leerlauf ohne Maus/Tastatur",
+              "quiet_minutes": "Danach ruhig bleiben",
+              "min_after_wake_minutes": "Frühestens nach dem Wecken",
+              "network_limit_kbs": "Netzwerk gilt als ruhig unter"
+            },
+            "data_description": {
+              "idle_minutes": "Ab dann gilt der PC als sicher zum Abschalten (wenn Steam nicht lädt, kein Spiel läuft und keine Erweiterung ihn belegt).",
+              "quiet_minutes": "So lange muss er danach ununterbrochen sicher bleiben, bevor er herunterfährt.",
+              "min_after_wake_minutes": "Mindestlaufzeit nach dem Wecken.",
+              "network_limit_kbs": "Mehr Netzwerkverkehr zählt als Benutzung."
+            }
+          },
+          "idle_prompt": {
+            "name": "Leerlauf-Nachfrage (PC wurde von Hand eingeschaltet)",
+            "data": {
+              "prompt_after_minutes": "Nachfragen nach Leerlauf von",
+              "after_download_minutes": "Nachlauf nach einem Download",
+              "after_game_minutes": "Nachlauf nach Spielende"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push mit Knopf Herunterfahren, wenn so lange keine Maus/Tastatur benutzt wurde.",
+              "after_download_minutes": "Erst so lange nach Ende eines Steam-Downloads fragen.",
+              "after_game_minutes": "Ein laufendes Spiel zählt als Benutzung (Controller sieht der Leerlauf nicht)."
+            }
+          },
+          "reminder": {
+            "name": "Erinnerung, wenn die Abschaltautomatik aus ist",
+            "data": {
+              "after_hours": "Erinnern, wenn aus seit",
+              "every_hours": "Wiederholen alle"
+            },
+            "data_description": {
+              "after_hours": "Bezieht sich auf den Schalter PC automatisch ausschalten.",
+              "every_hours": "Geprüft wird zur vollen Stunde."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Prüfen alle",
+              "stalled_minutes": "Download hängt nach",
+              "link": "Link beim Antippen",
+              "api_key": "Steam-Web-API-Schlüssel",
+              "steam_id": "Steam-ID",
+              "overflow_drive": "Overflow-Platte"
+            },
+            "data_description": {
+              "check_every_hours": "Vergleicht die installierten Spiele mit dem öffentlichen Stand bei Steam (der PC bleibt aus). Zusätzlich nach jedem Steam-Download.",
+              "stalled_minutes": "Push, wenn ein laufender Steam-Auftrag so lange keinen Fortschritt zeigt (geprüft alle 10 min, höchstens alle 30 min).",
+              "link": "Dashboard-Pfad, der beim Antippen einer Steam-Push geöffnet wird.",
+              "api_key": "Schlüssel von steamcommunity.com/dev/apikey. Damit werden die gekauften Spiele abgefragt (nicht installiert, Neukäufe).",
+              "steam_id": "SteamID64 (17 Ziffern, beginnt mit 7656), die Adresse deines Steam-Profils oder der Name aus deiner benutzerdefinierten Profil-URL (steamcommunity.com/id/deinname). Gespeichert wird die SteamID64.",
+              "overflow_drive": "Nur für neue Käufe, die sich selbst installieren oder über den Knopf der Kauf-Push-Nachricht: Hat die Standard-Bibliothek von Steam (der Stern in den Speicher-Einstellungen) keinen Platz für das Spiel oder ist ihr Laufwerk nicht da, wird das Spiel einmalig hier installiert, wenn es passt. Die Ergebnis-Push-Nachricht sagt das. Ein Laufwerk ohne Steam-Bibliothek bekommt eine. Spiele, die du von Hand installierst, kommen nie hierher. Das Laufwerk der Standard-Bibliothek selbst bewirkt nichts."
+            }
+          },
+          "active_hours": {
+            "name": "Aktivitätszeit (automatische Aufträge)",
+            "data": {
+              "enabled": "Auf Aktivitätszeit beschränken",
+              "start": "Von",
+              "end": "Bis"
+            },
+            "data_description": {
+              "enabled": "Automatische Updates und die automatische Installation von Neukäufen starten nur in dieser Zeit, und nur dann wird der PC dafür eingeschaltet. Was außerhalb anfällt, wartet und startet von selbst, sobald die Zeit beginnt. Alles, was du von Hand startest, läuft sofort. Die Prüfung auf Updates und Neukäufe läuft jederzeit (der PC bleibt aus).",
+              "start": "Beginn der Aktivitätszeit. Die Zeit darf über Mitternacht gehen (z. B. 22:00 bis 06:00).",
+              "end": "Ende der Aktivitätszeit. Ein dann noch laufender Auftrag wird fertig; wartende automatische Aufträge warten auf den nächsten Beginn. Dieselbe Zeit wie der Beginn heißt ganztägig."
+            }
+          }
+        }
+      },
+      "pc": {
+        "title": "Weiterer PC",
+        "description": "Steam Engine ist schon für einen PC eingerichtet. Gib den Namen ein, den dieser weitere PC in seiner Einrichtung bekommen hat (Install.cmd fragt danach; er steht als PcName in settings.psd1).",
+        "data": {
+          "pc_name": "Name des PCs"
+        }
+      },
+      "settings": {
+        "title": "Einstellungen für {pc}",
+        "description": "Vorbelegt mit den Einstellungen des ersten PCs, außer den Feldern des PCs selbst (PC erreichbar, Einschalten mit, Spiele ohne Sperre starten): Stelle sie für diesen PC ein. Du kannst alles später unter Konfigurieren ändern.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC erreichbar",
+              "wake_entity": "Einschalten mit",
+              "launch_unlocked": "Spiele ohne Sperre starten"
+            },
+            "data_description": {
+              "reachable_entity": "Binärsensor, der an ist, solange der PC läuft, z. B. ein Ping-Sensor.",
+              "wake_entity": "Knopf, Schalter oder Skript, der den PC einschaltet (Wake-on-LAN, Steckdose, Relais).",
+              "launch_unlocked": "Nur wenn ein Spiel aus Home Assistant gestartet wird, während der PC aus ist: Der PC wird eingeschaltet und die Sperre nach der automatischen Anmeldung einmal ausgelassen, damit das Spiel starten kann. Abwägung bei der Sicherheit: Bis du ihn sperrst, kann jeder am PC ihn benutzen. Der Hinweis für den PC gilt 10 Minuten."
+            }
+          },
+          "notify": {
+            "name": "Benachrichtigung",
+            "data": {
+              "notify_service": "Push an",
+              "push_kinds": "Pushes zu",
+              "quiet_auto_updates": "Automatische Updates still",
+              "link": "Link beim Antippen"
+            },
+            "data_description": {
+              "notify_service": "Benachrichtigungsdienst der Companion App, z. B. mobile_app_deinhandy (notify. davor ist egal). „Keine Pushes“: Es wird nichts gesendet, die Ereignisse für eigene Automationen bleiben.",
+              "push_kinds": "Antworten auf einen Knopf einer Push (z. B. „Löschen?“) kommen immer.",
+              "quiet_auto_updates": "Aufträge von Spielen mit automatischen Updates schicken während des Laufs und bei Erfolg keine Push. Eine Push kommt nur, wenn der Platz nicht reichte oder auch der zweite Versuch scheiterte. Die Update-Push lässt sie weg.",
+              "link": "Dashboard-Pfad, der beim Antippen der Push geöffnet wird."
+            }
+          },
+          "auto_off": {
+            "name": "Automatisch ausschalten (PC wurde von einer Automation geweckt)",
+            "data": {
+              "idle_minutes": "Leerlauf ohne Maus/Tastatur",
+              "quiet_minutes": "Danach ruhig bleiben",
+              "min_after_wake_minutes": "Frühestens nach dem Wecken",
+              "network_limit_kbs": "Netzwerk gilt als ruhig unter"
+            },
+            "data_description": {
+              "idle_minutes": "Ab dann gilt der PC als sicher zum Abschalten (wenn Steam nicht lädt, kein Spiel läuft und keine Erweiterung ihn belegt).",
+              "quiet_minutes": "So lange muss er danach ununterbrochen sicher bleiben, bevor er herunterfährt.",
+              "min_after_wake_minutes": "Mindestlaufzeit nach dem Wecken.",
+              "network_limit_kbs": "Mehr Netzwerkverkehr zählt als Benutzung."
+            }
+          },
+          "idle_prompt": {
+            "name": "Leerlauf-Nachfrage (PC wurde von Hand eingeschaltet)",
+            "data": {
+              "prompt_after_minutes": "Nachfragen nach Leerlauf von",
+              "after_download_minutes": "Nachlauf nach einem Download",
+              "after_game_minutes": "Nachlauf nach Spielende"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push mit Knopf Herunterfahren, wenn so lange keine Maus/Tastatur benutzt wurde.",
+              "after_download_minutes": "Erst so lange nach Ende eines Steam-Downloads fragen.",
+              "after_game_minutes": "Ein laufendes Spiel zählt als Benutzung (Controller sieht der Leerlauf nicht)."
+            }
+          },
+          "reminder": {
+            "name": "Erinnerung, wenn die Abschaltautomatik aus ist",
+            "data": {
+              "after_hours": "Erinnern, wenn aus seit",
+              "every_hours": "Wiederholen alle"
+            },
+            "data_description": {
+              "after_hours": "Bezieht sich auf den Schalter PC automatisch ausschalten.",
+              "every_hours": "Geprüft wird zur vollen Stunde."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Prüfen alle",
+              "stalled_minutes": "Download hängt nach",
+              "link": "Link beim Antippen",
+              "api_key": "Steam-Web-API-Schlüssel",
+              "steam_id": "Steam-ID",
+              "overflow_drive": "Overflow-Platte"
+            },
+            "data_description": {
+              "check_every_hours": "Vergleicht die installierten Spiele mit dem öffentlichen Stand bei Steam (der PC bleibt aus). Zusätzlich nach jedem Steam-Download.",
+              "stalled_minutes": "Push, wenn ein laufender Steam-Auftrag so lange keinen Fortschritt zeigt (geprüft alle 10 min, höchstens alle 30 min).",
+              "link": "Dashboard-Pfad, der beim Antippen einer Steam-Push geöffnet wird.",
+              "api_key": "Schlüssel von steamcommunity.com/dev/apikey. Damit werden die gekauften Spiele abgefragt (nicht installiert, Neukäufe).",
+              "steam_id": "SteamID64 (17 Ziffern, beginnt mit 7656), die Adresse deines Steam-Profils oder der Name aus deiner benutzerdefinierten Profil-URL (steamcommunity.com/id/deinname). Gespeichert wird die SteamID64.",
+              "overflow_drive": "Nur für neue Käufe, die sich selbst installieren oder über den Knopf der Kauf-Push-Nachricht: Hat die Standard-Bibliothek von Steam (der Stern in den Speicher-Einstellungen) keinen Platz für das Spiel oder ist ihr Laufwerk nicht da, wird das Spiel einmalig hier installiert, wenn es passt. Die Ergebnis-Push-Nachricht sagt das. Ein Laufwerk ohne Steam-Bibliothek bekommt eine. Spiele, die du von Hand installierst, kommen nie hierher. Das Laufwerk der Standard-Bibliothek selbst bewirkt nichts."
+            }
+          },
+          "active_hours": {
+            "name": "Aktivitätszeit (automatische Aufträge)",
+            "data": {
+              "enabled": "Auf Aktivitätszeit beschränken",
+              "start": "Von",
+              "end": "Bis"
+            },
+            "data_description": {
+              "enabled": "Automatische Updates und die automatische Installation von Neukäufen starten nur in dieser Zeit, und nur dann wird der PC dafür eingeschaltet. Was außerhalb anfällt, wartet und startet von selbst, sobald die Zeit beginnt. Alles, was du von Hand startest, läuft sofort. Die Prüfung auf Updates und Neukäufe läuft jederzeit (der PC bleibt aus).",
+              "start": "Beginn der Aktivitätszeit. Die Zeit darf über Mitternacht gehen (z. B. 22:00 bis 06:00).",
+              "end": "Ende der Aktivitätszeit. Ein dann noch laufender Auftrag wird fertig; wartende automatische Aufträge warten auf den nächsten Beginn. Dieselbe Zeit wie der Beginn heißt ganztägig."
+            }
+          }
+        }
+      },
+      "found": {
+        "title": "PC gefunden",
+        "description": "Der Steam-Engine-Agent des PCs „{pc}“ (Rechner {computer}) meldet sich bei Home Assistant. Einrichten? Als Nächstes kommen seine Einstellungen."
+      }
+    },
+    "error": {
+      "steam_both": "Steam-Web-API-Schlüssel und Steam-ID entweder beide eintragen oder beide leer lassen.",
+      "invalid_api_key": "Steam lehnt den Steam-Web-API-Schlüssel ab. Kopiere ihn noch einmal von steamcommunity.com/dev/apikey.",
+      "steam_id_not_found": "Zu dieser Steam-ID, Adresse oder diesem Namen gibt es kein Steam-Profil.",
+      "profile_private": "Steam zeigt für dieses Profil keine Spiele. Stelle in den Steam-Privatsphäre-Einstellungen „Spieldetails“ auf Öffentlich und prüfe die Steam-ID.",
+      "cannot_connect": "Steam hat nicht geantwortet. Versuche es später noch einmal oder trage die SteamID64 ein.",
+      "notify_not_found": "Einen Benachrichtigungsdienst mit diesem Namen gibt es nicht. Wähle einen aus der Liste (der der Companion App heißt mobile_app_ und dann der Name des Handys).",
+      "pc_name_invalid": "Der Name braucht Buchstaben oder Ziffern.",
+      "pc_exists": "Steam Engine ist für diesen PC schon eingerichtet."
+    },
+    "abort": {
+      "already_configured": "Steam Engine ist für diesen PC schon eingerichtet.",
+      "not_supported": "Diese Meldung stammt nicht von einem Steam-Engine-Agenten.",
+      "already_in_progress": "Dieser PC wird schon eingerichtet."
+    },
+    "flow_title": "{name}"
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Steam Engine",
+        "description": "Alle Einstellungen der Steam Engine. Änderungen gelten nach dem Absenden, die Integration lädt dabei neu.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC erreichbar",
+              "wake_entity": "Einschalten mit",
+              "launch_unlocked": "Spiele ohne Sperre starten"
+            },
+            "data_description": {
+              "reachable_entity": "Binärsensor, der an ist, solange der PC läuft, z. B. ein Ping-Sensor.",
+              "wake_entity": "Knopf, Schalter oder Skript, der den PC einschaltet (Wake-on-LAN, Steckdose, Relais).",
+              "launch_unlocked": "Nur wenn ein Spiel aus Home Assistant gestartet wird, während der PC aus ist: Der PC wird eingeschaltet und die Sperre nach der automatischen Anmeldung einmal ausgelassen, damit das Spiel starten kann. Abwägung bei der Sicherheit: Bis du ihn sperrst, kann jeder am PC ihn benutzen. Der Hinweis für den PC gilt 10 Minuten."
+            }
+          },
+          "notify": {
+            "name": "Benachrichtigung",
+            "data": {
+              "notify_service": "Push an",
+              "push_kinds": "Pushes zu",
+              "quiet_auto_updates": "Automatische Updates still",
+              "link": "Link beim Antippen"
+            },
+            "data_description": {
+              "notify_service": "Benachrichtigungsdienst der Companion App, z. B. mobile_app_deinhandy (notify. davor ist egal). „Keine Pushes“: Es wird nichts gesendet, die Ereignisse für eigene Automationen bleiben.",
+              "push_kinds": "Antworten auf einen Knopf einer Push (z. B. „Löschen?“) kommen immer.",
+              "quiet_auto_updates": "Aufträge von Spielen mit automatischen Updates schicken während des Laufs und bei Erfolg keine Push. Eine Push kommt nur, wenn der Platz nicht reichte oder auch der zweite Versuch scheiterte. Die Update-Push lässt sie weg.",
+              "link": "Dashboard-Pfad, der beim Antippen der Push geöffnet wird."
+            }
+          },
+          "auto_off": {
+            "name": "Automatisch ausschalten (PC wurde von einer Automation geweckt)",
+            "data": {
+              "idle_minutes": "Leerlauf ohne Maus/Tastatur",
+              "quiet_minutes": "Danach ruhig bleiben",
+              "min_after_wake_minutes": "Frühestens nach dem Wecken",
+              "network_limit_kbs": "Netzwerk gilt als ruhig unter"
+            },
+            "data_description": {
+              "idle_minutes": "Ab dann gilt der PC als sicher zum Abschalten (wenn Steam nicht lädt, kein Spiel läuft und keine Erweiterung ihn belegt).",
+              "quiet_minutes": "So lange muss er danach ununterbrochen sicher bleiben, bevor er herunterfährt.",
+              "min_after_wake_minutes": "Mindestlaufzeit nach dem Wecken.",
+              "network_limit_kbs": "Mehr Netzwerkverkehr zählt als Benutzung."
+            }
+          },
+          "idle_prompt": {
+            "name": "Leerlauf-Nachfrage (PC wurde von Hand eingeschaltet)",
+            "data": {
+              "prompt_after_minutes": "Nachfragen nach Leerlauf von",
+              "after_download_minutes": "Nachlauf nach einem Download",
+              "after_game_minutes": "Nachlauf nach Spielende"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push mit Knopf Herunterfahren, wenn so lange keine Maus/Tastatur benutzt wurde.",
+              "after_download_minutes": "Erst so lange nach Ende eines Steam-Downloads fragen.",
+              "after_game_minutes": "Ein laufendes Spiel zählt als Benutzung (Controller sieht der Leerlauf nicht)."
+            }
+          },
+          "reminder": {
+            "name": "Erinnerung, wenn die Abschaltautomatik aus ist",
+            "data": {
+              "after_hours": "Erinnern, wenn aus seit",
+              "every_hours": "Wiederholen alle"
+            },
+            "data_description": {
+              "after_hours": "Bezieht sich auf den Schalter PC automatisch ausschalten.",
+              "every_hours": "Geprüft wird zur vollen Stunde."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Prüfen alle",
+              "stalled_minutes": "Download hängt nach",
+              "link": "Link beim Antippen",
+              "api_key": "Steam-Web-API-Schlüssel",
+              "steam_id": "Steam-ID",
+              "overflow_drive": "Overflow-Platte"
+            },
+            "data_description": {
+              "check_every_hours": "Vergleicht die installierten Spiele mit dem öffentlichen Stand bei Steam (der PC bleibt aus). Zusätzlich nach jedem Steam-Download.",
+              "stalled_minutes": "Push, wenn ein laufender Steam-Auftrag so lange keinen Fortschritt zeigt (geprüft alle 10 min, höchstens alle 30 min).",
+              "link": "Dashboard-Pfad, der beim Antippen einer Steam-Push geöffnet wird.",
+              "api_key": "Schlüssel von steamcommunity.com/dev/apikey. Damit werden die gekauften Spiele abgefragt (nicht installiert, Neukäufe).",
+              "steam_id": "SteamID64 (17 Ziffern, beginnt mit 7656), die Adresse deines Steam-Profils oder der Name aus deiner benutzerdefinierten Profil-URL (steamcommunity.com/id/deinname). Gespeichert wird die SteamID64.",
+              "overflow_drive": "Nur für neue Käufe, die sich selbst installieren oder über den Knopf der Kauf-Push-Nachricht: Hat die Standard-Bibliothek von Steam (der Stern in den Speicher-Einstellungen) keinen Platz für das Spiel oder ist ihr Laufwerk nicht da, wird das Spiel einmalig hier installiert, wenn es passt. Die Ergebnis-Push-Nachricht sagt das. Ein Laufwerk ohne Steam-Bibliothek bekommt eine. Spiele, die du von Hand installierst, kommen nie hierher. Das Laufwerk der Standard-Bibliothek selbst bewirkt nichts."
+            }
+          },
+          "active_hours": {
+            "name": "Aktivitätszeit (automatische Aufträge)",
+            "data": {
+              "enabled": "Auf Aktivitätszeit beschränken",
+              "start": "Von",
+              "end": "Bis"
+            },
+            "data_description": {
+              "enabled": "Automatische Updates und die automatische Installation von Neukäufen starten nur in dieser Zeit, und nur dann wird der PC dafür eingeschaltet. Was außerhalb anfällt, wartet und startet von selbst, sobald die Zeit beginnt. Alles, was du von Hand startest, läuft sofort. Die Prüfung auf Updates und Neukäufe läuft jederzeit (der PC bleibt aus).",
+              "start": "Beginn der Aktivitätszeit. Die Zeit darf über Mitternacht gehen (z. B. 22:00 bis 06:00).",
+              "end": "Ende der Aktivitätszeit. Ein dann noch laufender Auftrag wird fertig; wartende automatische Aufträge warten auf den nächsten Beginn. Dieselbe Zeit wie der Beginn heißt ganztägig."
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "steam_both": "Steam-Web-API-Schlüssel und Steam-ID entweder beide eintragen oder beide leer lassen.",
+      "invalid_api_key": "Steam lehnt den Steam-Web-API-Schlüssel ab. Kopiere ihn noch einmal von steamcommunity.com/dev/apikey.",
+      "steam_id_not_found": "Zu dieser Steam-ID, Adresse oder diesem Namen gibt es kein Steam-Profil.",
+      "profile_private": "Steam zeigt für dieses Profil keine Spiele. Stelle in den Steam-Privatsphäre-Einstellungen „Spieldetails“ auf Öffentlich und prüfe die Steam-ID.",
+      "cannot_connect": "Steam hat nicht geantwortet. Versuche es später noch einmal oder trage die SteamID64 ein.",
+      "notify_not_found": "Einen Benachrichtigungsdienst mit diesem Namen gibt es nicht. Wähle einen aus der Liste (der der Companion App heißt mobile_app_ und dann der Name des Handys)."
+    }
+  },
+  "services": {
+    "pc_wake": {
+      "name": "PC wecken",
+      "description": "Weckt den PC, wenn er aus ist (markiert ihn als von einer Automation geweckt, das erlaubt das automatische Ausschalten), und wartet, bis der Steam-Agent bereit ist. Antwort: woken, ready.",
+      "fields": {
+        "wait_for_entity": {
+          "name": "Zusätzlich warten auf",
+          "description": "Entity, die einen Wert haben muss, bevor der Dienst zurückkehrt."
+        },
+        "wait_for_state": {
+          "name": "Gewünschter Zustand",
+          "description": "Wenn gesetzt, warten, bis die Entity genau diesen Zustand hat (z. B. on)."
+        },
+        "timeout_minutes": {
+          "name": "Maximale Wartezeit",
+          "description": "Höchstens so viele Minuten warten."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "pc_shutdown_when_idle": {
+      "name": "PC herunterfahren, wenn frei",
+      "description": "Nur für einen PC, den eine Automation geweckt hat: wartet, bis Steam, Spiele und Erweiterungen fertig sind, und fährt ihn dann herunter. Ohne Antwort-Variable wartet der Aufrufer nicht. Antwort: shutdown, reason.",
+      "fields": {
+        "max_wait_hours": {
+          "name": "Maximale Wartezeit",
+          "description": "Höchstens so viele Stunden warten."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "check_updates": {
+      "name": "Steam-Updates prüfen",
+      "description": "Vergleicht die installierten Spiele mit dem öffentlichen Stand auf api.steamcmd.net. Antwort: games (veraltete Spiele), skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "install": {
+      "name": "Spiel installieren oder aktualisieren",
+      "description": "Gibt das Spiel an den Steam-Agenten, weckt den PC bei Bedarf. Läuft gerade ein Auftrag, wartet es in der Warteschlange; eine Erstinstallation oder ein Update des laufenden Spiels wartet, bis das Spiel beendet ist. Ohne Antwort-Variable wartet der Aufrufer nicht. Antwort: queued, sent, woken.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID, mehrere mit Komma getrennt."
+        },
+        "drive": {
+          "name": "Laufwerk",
+          "description": "Nur für eine Erstinstallation: der Buchstabe des Laufwerks, auf das installiert wird (z. B. E): seine Steam-Bibliothek oder eine neue, die die Installation auf einem Laufwerk ohne Bibliothek anlegt. Leer: ein schon gespeichertes Ziel des Spiels (noch in der Warteschlange) bleibt, sonst die Standardbibliothek von Steam (der Stern in den Speicher-Einstellungen von Steam); zurück zur Standardbibliothek geht es mit deren Buchstaben. Ein installiertes Spiel bleibt, wo es ist."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "uninstall": {
+      "name": "Spiel deinstallieren",
+      "description": "Deinstalliert das Spiel über den Steam-Agenten auf dem PC, weckt ihn bei Bedarf. Antwort: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "move": {
+      "name": "Spiel verschieben",
+      "description": "Verschiebt ein installiertes Spiel über den Steam-Agenten in die Steam-Bibliothek auf einem anderen Laufwerk, weckt den PC bei Bedarf. Ein Laufwerk ohne Steam-Bibliothek bekommt eine neue. Steam wird gegen Ende kurz geschlossen; der alte Ordner wird erst gelöscht, wenn Steam das Spiel auf dem neuen Laufwerk hat. Nicht während ein Spiel läuft oder ein anderer Steam-Auftrag läuft. Ohne Antwortvariable wartet der Aufrufer nicht. Antwort: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID eines installierten Spiels."
+        },
+        "drive": {
+          "name": "Laufwerk",
+          "description": "Der Buchstabe des Laufwerks, auf das das Spiel soll (z. B. E)."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Jetzt abgleichen",
+      "description": "Holt die Spielebibliothek vom PC (wenn der Agent online ist) und sucht dann nach Updates und neuen Käufen. Antwort: library_refreshed, games (Updates), skipped, new_purchases, owned_skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "check_owned": {
+      "name": "Gekaufte Spiele abgleichen",
+      "description": "Vergleicht die gekauften Spiele (Steam-Web-API) mit den installierten und meldet Neukäufe. Antwort: games (nicht installiert), new, skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "launch": {
+      "name": "Spiel starten",
+      "description": "Startet ein installiertes Spiel auf dem PC über den Steam-Agenten und weckt den PC bei Bedarf; läuft Steam noch nicht, startet es zuerst. Nicht, solange ein Spiel läuft. Antwort: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "set_auto_update": {
+      "name": "Automatische Updates für ein Spiel",
+      "description": "Schaltet automatische Updates für ein Spiel an oder aus. Ohne „An“ wird umgeschaltet. Antwort: appid, auto_update.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID."
+        },
+        "enabled": {
+          "name": "An",
+          "description": "An oder aus; weglassen zum Umschalten."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    },
+    "set_muted": {
+      "name": "Updates eines Spiels stumm schalten",
+      "description": "Schaltet die Updates eines Spiels stumm oder wieder laut: kein Update-Push, zählt nicht im Update-Sensor, seine automatischen Updates bleiben still (Fehler kommen weiter). Ohne „An“ wird umgeschaltet. Antwort: appid, muted.",
+      "fields": {
+        "appid": {
+          "name": "App-ID",
+          "description": "Steam-App-ID."
+        },
+        "enabled": {
+          "name": "An",
+          "description": "Stumm oder nicht; weglassen zum Umschalten."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Nur bei mehreren PCs an einem Home Assistant: der Name des PCs (wie am PC eingerichtet). Leer: der einzige PC oder der PC ohne Namen."
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "pc": {
+        "name": "PC"
+      },
+      "auto_off_enabled": {
+        "name": "PC automatisch ausschalten"
+      },
+      "woken_by_automation": {
+        "name": "Von Automation geweckt"
+      },
+      "auto_install_purchases": {
+        "name": "Neukäufe automatisch installieren"
+      },
+      "auto_update_picked_game": {
+        "name": "Auto-Update für ausgewähltes Spiel"
+      }
+    },
+    "binary_sensor": {
+      "safe_to_shut_down": {
+        "name": "Sicher zum Abschalten"
+      },
+      "steam_busy": {
+        "name": "Steam beschäftigt"
+      },
+      "plugin_busy": {
+        "name": "Durch Erweiterung belegt"
+      }
+    },
+    "button": {
+      "install_game": {
+        "name": "Spiel installieren"
+      },
+      "uninstall_game": {
+        "name": "Spiel deinstallieren"
+      },
+      "launch_game": {
+        "name": "Spiel starten"
+      }
+    },
+    "select": {
+      "game_to_install": {
+        "name": "Spiel zum Installieren"
+      },
+      "installed_game": {
+        "name": "Installiertes Spiel"
+      }
+    },
+    "sensor": {
+      "pc_state": {
+        "name": "PC-Zustand",
+        "state": {
+          "off": "Aus",
+          "starting": "Startet",
+          "on": "An",
+          "shutting_down": "Fährt herunter",
+          "restarting": "Startet neu"
+        }
+      },
+      "updates": {
+        "name": "Updates",
+        "unit_of_measurement": "Spiele"
+      },
+      "last_answer": {
+        "name": "Letzte Antwort"
+      },
+      "query": {
+        "name": "Abfrage",
+        "state": {
+          "ok": "ok",
+          "stale": "gestört",
+          "never": "nie"
+        }
+      },
+      "not_installed": {
+        "name": "Nicht installierte Spiele",
+        "unit_of_measurement": "Spiele"
+      },
+      "download_progress": {
+        "name": "Download-Fortschritt"
+      },
+      "current_game": {
+        "name": "Aktuelles Spiel"
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Steam Engine ist für den PC nicht geladen (nicht eingerichtet, deaktiviert oder startet gerade neu). Gleich noch einmal versuchen."
+    },
+    "no_game_picked": {
+      "message": "Erst ein Spiel auswählen."
+    },
+    "game_running": {
+      "message": "Auf dem PC läuft schon ein Spiel."
+    },
+    "moving": {
+      "message": "Auf dem PC wird gerade ein Spiel auf ein anderes Laufwerk verschoben; Steam ist dabei kurz geschlossen. Danach noch einmal versuchen."
+    },
+    "no_wake_entity": {
+      "message": "Kein Gerät zum Einschalten des PCs gewählt (Steam Engine > Konfigurieren > PC)."
+    },
+    "pc_stays_on": {
+      "message": "Der PC bleibt an: {reason}."
+    },
+    "unknown_pc": {
+      "message": "Steam Engine kennt keinen PC namens {pc} (PCs: {pcs})."
+    },
+    "pc_needed": {
+      "message": "Es gibt mehrere PCs ({pcs}): im Feld PC angeben, welcher gemeint ist."
+    }
+  },
+  "issues": {
+    "agent_missing": {
+      "title": "{pc}Die PC-Seite der Steam Engine hat sich noch nicht gemeldet",
+      "description": "Home Assistant hat den Steam-Agenten des PCs noch nicht gesehen. Richte die PC-Seite ein: die SteamEngine-PC-ZIP des Release (SteamEngine-PC-x.y.z.zip) auf dem Spiele-PC entpacken und Install.cmd doppelklicken (siehe README). Die Steam Engine lädt sich nach dem ersten Start des Agenten innerhalb einer Minute selbst neu, dann verschwindet dieser Hinweis."
+    },
+    "api_key_invalid": {
+      "title": "{pc}Steam lehnt den Steam-Web-API-Schlüssel ab",
+      "description": "Die gekauften Spiele können nicht abgefragt werden (nicht installierte Spiele, Neukäufe). Trage den Schlüssel unter Einstellungen > Geräte & Dienste > Steam Engine > Konfigurieren > Steam neu ein (von steamcommunity.com/dev/apikey). Der Hinweis verschwindet nach der nächsten erfolgreichen Prüfung."
+    },
+    "profile_private": {
+      "title": "{pc}Steam zeigt für das Steam-Profil keine Spiele",
+      "description": "Die gekauften Spiele können nicht abgefragt werden. Stelle in den Steam-Privatsphäre-Einstellungen (steamcommunity.com/my/edit/settings) „Spieldetails“ auf Öffentlich und prüfe die Steam-ID unter Einstellungen > Geräte & Dienste > Steam Engine > Konfigurieren > Steam. Der Hinweis verschwindet nach der nächsten erfolgreichen Prüfung (stündlich)."
+    },
+    "steam_not_logged_on": {
+      "title": "{pc}Der Steam-Client auf dem PC ist nicht angemeldet",
+      "description": "Ein Steam-Auftrag ist gescheitert, weil sich der Steam-Client beim Start nicht angemeldet hat. Melde dich auf dem PC in Steam mit „Angemeldet bleiben“ an, verlasse den Offlinemodus und starte den Auftrag erneut. Der Hinweis verschwindet nach dem nächsten erfolgreichen Auftrag."
+    },
+    "agent_not_running": {
+      "title": "{pc}Der Steam-Agent läuft nicht auf dem PC",
+      "description": "Der PC ist seit {minutes} Minuten erreichbar, aber der Steam-Agent meldet sich nicht. Steam-Aufträge und das automatische Ausschalten funktionieren deshalb nicht. Prüfe auf dem PC die geplante Aufgabe „Steam Engine Agent“ oder führe Install.cmd -Update aus. Der Hinweis verschwindet, sobald sich der Agent meldet."
+    }
+  },
+  "selector": {
+    "notify_service": {
+      "options": {
+        "none": "Keine Pushes"
+      }
+    },
+    "push_kinds": {
+      "options": {
+        "progress": "Auftrag gestartet und Fortschritt",
+        "result": "Ergebnis eines Auftrags",
+        "updates": "Neue Updates",
+        "purchases": "Neukäufe",
+        "uninstall": "Ergebnis einer Deinstallation (fertig oder fehlgeschlagen)",
+        "idle": "PC im Leerlauf (herunterfahren?) und automatisches Herunterfahren",
+        "reminder": "Erinnerung: Auto-Aus ausgeschaltet",
+        "problems": "Probleme (kein Platz, Auftrag hängt oder abgebrochen, Agent still oder nicht erreichbar, PC nicht heruntergefahren)"
+      }
+    },
+    "overflow_drive": {
+      "options": {
+        "none": "Keine"
+      }
+    }
+  }
+}

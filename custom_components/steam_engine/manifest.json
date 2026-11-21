@@ -1,0 +1,26 @@
+{
+  "domain": "steam_engine",
+  "name": "Steam Engine",
+  "after_dependencies": [
+    "mqtt"
+  ],
+  "codeowners": [
+    "@dust51490-spec"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/dust51490-spec/steam-engine",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/dust51490-spec/steam-engine/issues",
+  "mqtt": [
+    "steam/agent/info",
+    "steam/pc/+/agent/info"
+  ],
+  "requirements": [],
+  "version": "1.0.0"
+}

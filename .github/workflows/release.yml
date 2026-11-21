@@ -1,0 +1,73 @@
+# Packs the PC side as SteamEngine-PC-<version>.zip and the integration as steam_engine-<version>.zip
+# (for installing without HACS: unzip into /config/custom_components) and attaches both to a
+# published release. Run by hand (Actions > Release package > Run workflow) it only builds the zips
+# as a workflow artifact.
+name: Release package
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    # The same checks as on every push (hassfest, translations, tests, PC side); no package without them
+    uses: ./.github/workflows/validate.yml
+
+  package:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the version
+        id: version
+        run: |
+          manifest=$(python3 -c "import json; print(json.load(open('custom_components/steam_engine/manifest.json'))['version'])")
+          if [ "${{ github.event_name }}" = "release" ]; then
+            tag="${{ github.event.release.tag_name }}"
+            if [ "${tag#v}" != "$manifest" ]; then
+              echo "::error::Tag $tag does not match manifest.json version $manifest"
+              exit 1
+            fi
+          fi
+          echo "version=$manifest" >> "$GITHUB_OUTPUT"
+
+      - name: Build the zips
+        run: |
+          name="SteamEngine-PC-${{ steps.version.outputs.version }}"
+          mkdir -p "build/$name"
+          cp -r pc/. "build/$name/"
+          cp LICENSE "build/$name/"
+          # cmd.exe needs CRLF; checkout on Linux keeps it through .gitattributes, check anyway
+          for f in "build/$name"/*.cmd; do
+            grep -qU $'\r$' "$f" || { echo "::error::$f has no CRLF line endings"; exit 1; }
+          done
+          (cd build && zip -r -X "$name.zip" "$name")
+          # The integration: the folder steam_engine at the top, so it unzips into custom_components;
+          # with the license inside it
+          ha="steam_engine-${{ steps.version.outputs.version }}"
+          mkdir -p build/ha
+          cp -r custom_components/steam_engine build/ha/
+          cp LICENSE build/ha/steam_engine/
+          (cd build/ha && zip -r -X "../$ha.zip" steam_engine -x '*/__pycache__/*')
+          echo "ZIP_PC=build/$name.zip" >> "$GITHUB_ENV"
+          echo "ZIP_HA=build/$ha.zip" >> "$GITHUB_ENV"
+
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "$ZIP_PC" "$ZIP_HA" --clobber
+
+      - name: Keep as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          name: steam-engine-packages
+          path: |
+            ${{ env.ZIP_PC }}
+            ${{ env.ZIP_HA }}

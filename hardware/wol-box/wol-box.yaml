@@ -1,0 +1,78 @@
+# Wake-on-LAN box for a PC that is on Wi-Fi: a WT32-ETH01 joins your home network over Wi-Fi and
+# sends the magic packet through a network cable that goes straight into the PC's LAN port.
+# Build guide: README.md in this folder. Change only the substitutions below.
+
+substitutions:
+  name: wol-box
+  friendly_name: WoL box
+  # MAC address of the PC's LAN port that the cable goes to (Windows: Get-NetAdapter)
+  pc_mac: "00:00:00:00:00:00"
+  # Fixed address of the box in your home network (reserve it in the router)
+  wifi_ip: 192.168.1.60
+  wifi_gateway: 192.168.1.1
+  wifi_subnet: 255.255.255.0
+  wifi_dns: 192.168.1.1
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  variant: esp32
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: !secret wol_box_api_key
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: ${wifi_ip}
+    gateway: ${wifi_gateway}
+    subnet: ${wifi_subnet}
+    dns1: ${wifi_dns}
+  ap:
+    ssid: ${friendly_name} Fallback Hotspot
+    password: !secret wol_box_ap_password
+
+captive_portal:
+
+# The cable leads only to the PC. Its own tiny subnet that goes nowhere: it only carries the magic
+# packet into the network card. Pins are those of the WT32-ETH01, do not change them.
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk:
+    pin: GPIO0
+    mode: CLK_EXT_IN
+  phy_addr: 1
+  power_pin: GPIO16
+  manual_ip:
+    static_ip: 192.168.99.2
+    gateway: 192.168.99.2
+    subnet: 255.255.255.0
+  # Ethernet comes first (see network: below) and would otherwise set the address ESPHome reports.
+  # Without this line Home Assistant would see 192.168.99.2 and never reach the box.
+  use_address: ${wifi_ip}
+
+# Order matters: the first connected interface carries outgoing traffic, and the Wake-on-LAN
+# broadcast has to go into the cable to the PC, not into the Wi-Fi.
+network:
+  priority:
+    - ethernet
+    - wifi
+
+button:
+  - platform: wake_on_lan
+    name: Power on
+    icon: mdi:power
+    target_mac_address: ${pc_mac}

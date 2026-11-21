@@ -1,0 +1,135 @@
+# Checks every push and pull request: hassfest (Home Assistant's own checks of the integration),
+# the HACS validation, the translations, the tests in tests/ (pytest-homeassistant-custom-component,
+# against the pinned Home Assistant (requirements_test.txt) and the oldest supported one
+# (requirements_test_min.txt)), the dashboard card (syntax and the
+# tests of its pure functions in tests/js, node:test without npm packages) and the PC side in pc/. The
+# release workflow runs it too before it packs.
+name: Validate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    # The HACS action only validates public repositories
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    steps:
+      # The same checks as the Marketplace catalog (hacs/default), none ignored: brands are met by
+      # custom_components/steam_engine/brand, description and topics are set on the repository
+      - uses: hacs/action@main
+        with:
+          category: integration
+
+  translations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: strings.json equals en.json, de.json has the same keys and placeholders
+        working-directory: custom_components/steam_engine
+        run: |
+          cmp strings.json translations/en.json || { echo "::error::strings.json and translations/en.json differ"; exit 1; }
+          python3 - <<'EOF'
+          import json, re, sys
+
+          def leaves(node, path=""):
+              out = {}
+              for key, value in node.items():
+                  if isinstance(value, dict):
+                      out.update(leaves(value, f"{path}{key}."))
+                  else:
+                      out[path + key] = set(re.findall(r"\{(\w+)\}", str(value)))
+              return out
+
+          en = leaves(json.load(open("translations/en.json", encoding="utf-8")))
+          de = leaves(json.load(open("translations/de.json", encoding="utf-8")))
+          bad = sorted(set(en) ^ set(de)) + sorted(k for k in en.keys() & de.keys() if en[k] != de[k])
+          for key in bad:
+              print(f"::error file=custom_components/steam_engine/translations/de.json::differs from en.json at {key}")
+          sys.exit(1 if bad else 0)
+          EOF
+
+  tests:
+    # Against the pinned Home Assistant and the oldest one hacs.json allows
+    strategy:
+      fail-fast: false
+      matrix:
+        requirements: [requirements_test.txt, requirements_test_min.txt]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: ${{ matrix.requirements }}
+      - run: pip install -r ${{ matrix.requirements }}
+      - run: pytest
+
+  card:
+    # The card is one ES module without a build step; node --check on a .mjs copy, so the file is
+    # parsed as a module whatever node's detection of .js files does
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Syntax
+        run: |
+          cp custom_components/steam_engine/frontend/steam-engine-card.js "$RUNNER_TEMP/steam-engine-card.mjs"
+          node --check "$RUNNER_TEMP/steam-engine-card.mjs"
+      - name: Tests
+        run: node --test tests/js/*.test.mjs
+
+  pc:
+    # Windows PowerShell 5.1 reads a .ps1 without BOM as ANSI, so pc/ stays ASCII; cmd.exe needs CRLF
+    # in the .cmd files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: ASCII only
+        run: |
+          if LC_ALL=C grep -rnP '[\x80-\xFF]' pc --include='*.ps1' --include='*.psd1' --include='*.cmd'; then
+            echo "::error::Non-ASCII characters in pc/ (see above)"
+            exit 1
+          fi
+      - name: CRLF in the .cmd files
+        run: |
+          for f in pc/*.cmd; do
+            grep -qU $'\r$' "$f" || { echo "::error file=$f::no CRLF line endings"; exit 1; }
+          done
+
+  pc-syntax:
+    # Every script must parse in Windows PowerShell 5.1, which runs them on the PC. Not pwsh: PowerShell
+    # 7 also accepts syntax that 5.1 refuses (&&, ||, ??, ?., the ternary operator).
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: PowerShell syntax (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          if ($PSVersionTable.PSVersion.Major -ne 5) { Write-Output "::error::not Windows PowerShell 5.1 ($($PSVersionTable.PSVersion))"; exit 1 }
+          $failed = $false
+          $base = (Get-Location).Path.TrimEnd('\') + '\'
+          $files = @(Get-ChildItem pc -Recurse -File -Include *.ps1, *.psd1)
+          foreach ($f in $files) {
+            $tokens = $null; $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tokens, [ref]$errors)
+            $rel = $f.FullName.Substring($base.Length) -replace '\\', '/'
+            foreach ($e in $errors) {
+              Write-Output "::error file=$rel,line=$($e.Extent.StartLineNumber)::$($e.Message)"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+          Write-Output "$($files.Count) files parse in PowerShell $($PSVersionTable.PSVersion)."

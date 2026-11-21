@@ -1,0 +1,686 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Steam Engine",
+        "description": "All Steam Engine settings. You can change them later under Configure.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC reachable",
+              "wake_entity": "Turn on with",
+              "launch_unlocked": "Start games without the lock"
+            },
+            "data_description": {
+              "reachable_entity": "Binary sensor that is on while the PC is running, e.g. a Ping sensor.",
+              "wake_entity": "Button, switch or script that turns the PC on (Wake-on-LAN, smart plug, relay).",
+              "launch_unlocked": "Only when a game is started from Home Assistant while the PC is off: the PC is switched on and the lock after the automatic sign-in is left out once, so the game can start. Security trade-off: until you lock it, anyone at the PC can use it. The note for the PC is valid for 10 minutes."
+            }
+          },
+          "notify": {
+            "name": "Notifications",
+            "data": {
+              "notify_service": "Push to",
+              "push_kinds": "Pushes about",
+              "quiet_auto_updates": "Automatic updates quietly",
+              "link": "Link on tap"
+            },
+            "data_description": {
+              "notify_service": "Companion app notify service, e.g. mobile_app_yourphone (notify. in front is fine). \"No pushes\": nothing is sent; the events for your own automations stay.",
+              "push_kinds": "Answers to a button of a push (e.g. \"Delete?\") always come.",
+              "quiet_auto_updates": "Jobs of games with automatic updates push nothing while they run or when they went well. A push comes only when there was too little space, or when the second try failed too. The update push leaves them out.",
+              "link": "Dashboard path opened when the push is tapped."
+            }
+          },
+          "auto_off": {
+            "name": "Automatic shutdown (PC woken by an automation)",
+            "data": {
+              "idle_minutes": "Idle without mouse/keyboard",
+              "quiet_minutes": "Then stay quiet for",
+              "min_after_wake_minutes": "Not earlier than after wake",
+              "network_limit_kbs": "Network counts as quiet below"
+            },
+            "data_description": {
+              "idle_minutes": "From then on the PC is safe to shut down (if Steam is not downloading, no game runs and no plugin keeps it busy).",
+              "quiet_minutes": "It must stay safe this long without interruption before it shuts down.",
+              "min_after_wake_minutes": "Minimum runtime after waking.",
+              "network_limit_kbs": "More network traffic counts as use."
+            }
+          },
+          "idle_prompt": {
+            "name": "Idle prompt (PC switched on by hand)",
+            "data": {
+              "prompt_after_minutes": "Ask after idle of",
+              "after_download_minutes": "Wait after a download",
+              "after_game_minutes": "Wait after a game"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push with a shutdown button when mouse/keyboard were not used this long.",
+              "after_download_minutes": "Ask only this long after a Steam download ended.",
+              "after_game_minutes": "A running game counts as use (idle time does not see controllers)."
+            }
+          },
+          "reminder": {
+            "name": "Reminder while automatic shutdown is off",
+            "data": {
+              "after_hours": "Remind when off for",
+              "every_hours": "Repeat every"
+            },
+            "data_description": {
+              "after_hours": "Refers to the switch for automatic PC shutdown.",
+              "every_hours": "Checked on the full hour."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Check every",
+              "stalled_minutes": "Download stalled after",
+              "link": "Link on tap",
+              "api_key": "Steam Web API key",
+              "steam_id": "Steam ID",
+              "overflow_drive": "Overflow drive"
+            },
+            "data_description": {
+              "check_every_hours": "Compares the installed games with the public build and depot manifests on Steam (the PC stays off). Also after every Steam download.",
+              "stalled_minutes": "A push comes when a running Steam job shows no progress this long (checked every 10 min, at most every 30 min).",
+              "link": "Dashboard path opened when a Steam push is tapped.",
+              "api_key": "Key from steamcommunity.com/dev/apikey. Used to list your owned games (not installed, new purchases).",
+              "steam_id": "SteamID64 (17 digits, starts with 7656), the address of your Steam profile, or the name from its custom profile URL (steamcommunity.com/id/yourname). Saved as SteamID64.",
+              "overflow_drive": "Only for new purchases installed by themselves or with the button of the purchase push: when the default Steam library (the star in Steam's storage settings) has no space for the game or its drive is not there, the game is installed here once instead, if it fits. The result push says so. A drive without a Steam library gets one. Games you install by hand never go here. The drive of the default library itself has no effect."
+            }
+          },
+          "active_hours": {
+            "name": "Active hours (automatic work)",
+            "data": {
+              "enabled": "Limit to active hours",
+              "start": "From",
+              "end": "Until"
+            },
+            "data_description": {
+              "enabled": "Automatic updates and the automatic install of new purchases start only in this time, and the PC is only switched on for them then. What comes up outside it waits and starts by itself when the time begins. Everything you start by hand runs at once. The checks for updates and purchases run at any time (the PC stays off).",
+              "start": "Start of the active hours. A time window may cross midnight (e.g. 22:00 to 06:00).",
+              "end": "End of the active hours. A job that is still running then is finished; queued automatic work waits for the next start. The same time as the start means all day."
+            }
+          }
+        }
+      },
+      "pc": {
+        "title": "Another PC",
+        "description": "Steam Engine is set up for one PC already. Enter the name you gave this further PC in its setup (Install.cmd asks for it; it is PcName in settings.psd1).",
+        "data": {
+          "pc_name": "PC name"
+        }
+      },
+      "settings": {
+        "title": "Settings for {pc}",
+        "description": "Filled in with the settings of the first PC, except the fields of the PC itself (PC reachable, Turn on with, Start games without the lock): set them for this PC. You can change everything later under Configure.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC reachable",
+              "wake_entity": "Turn on with",
+              "launch_unlocked": "Start games without the lock"
+            },
+            "data_description": {
+              "reachable_entity": "Binary sensor that is on while the PC is running, e.g. a Ping sensor.",
+              "wake_entity": "Button, switch or script that turns the PC on (Wake-on-LAN, smart plug, relay).",
+              "launch_unlocked": "Only when a game is started from Home Assistant while the PC is off: the PC is switched on and the lock after the automatic sign-in is left out once, so the game can start. Security trade-off: until you lock it, anyone at the PC can use it. The note for the PC is valid for 10 minutes."
+            }
+          },
+          "notify": {
+            "name": "Notifications",
+            "data": {
+              "notify_service": "Push to",
+              "push_kinds": "Pushes about",
+              "quiet_auto_updates": "Automatic updates quietly",
+              "link": "Link on tap"
+            },
+            "data_description": {
+              "notify_service": "Companion app notify service, e.g. mobile_app_yourphone (notify. in front is fine). \"No pushes\": nothing is sent; the events for your own automations stay.",
+              "push_kinds": "Answers to a button of a push (e.g. \"Delete?\") always come.",
+              "quiet_auto_updates": "Jobs of games with automatic updates push nothing while they run or when they went well. A push comes only when there was too little space, or when the second try failed too. The update push leaves them out.",
+              "link": "Dashboard path opened when the push is tapped."
+            }
+          },
+          "auto_off": {
+            "name": "Automatic shutdown (PC woken by an automation)",
+            "data": {
+              "idle_minutes": "Idle without mouse/keyboard",
+              "quiet_minutes": "Then stay quiet for",
+              "min_after_wake_minutes": "Not earlier than after wake",
+              "network_limit_kbs": "Network counts as quiet below"
+            },
+            "data_description": {
+              "idle_minutes": "From then on the PC is safe to shut down (if Steam is not downloading, no game runs and no plugin keeps it busy).",
+              "quiet_minutes": "It must stay safe this long without interruption before it shuts down.",
+              "min_after_wake_minutes": "Minimum runtime after waking.",
+              "network_limit_kbs": "More network traffic counts as use."
+            }
+          },
+          "idle_prompt": {
+            "name": "Idle prompt (PC switched on by hand)",
+            "data": {
+              "prompt_after_minutes": "Ask after idle of",
+              "after_download_minutes": "Wait after a download",
+              "after_game_minutes": "Wait after a game"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push with a shutdown button when mouse/keyboard were not used this long.",
+              "after_download_minutes": "Ask only this long after a Steam download ended.",
+              "after_game_minutes": "A running game counts as use (idle time does not see controllers)."
+            }
+          },
+          "reminder": {
+            "name": "Reminder while automatic shutdown is off",
+            "data": {
+              "after_hours": "Remind when off for",
+              "every_hours": "Repeat every"
+            },
+            "data_description": {
+              "after_hours": "Refers to the switch for automatic PC shutdown.",
+              "every_hours": "Checked on the full hour."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Check every",
+              "stalled_minutes": "Download stalled after",
+              "link": "Link on tap",
+              "api_key": "Steam Web API key",
+              "steam_id": "Steam ID",
+              "overflow_drive": "Overflow drive"
+            },
+            "data_description": {
+              "check_every_hours": "Compares the installed games with the public build and depot manifests on Steam (the PC stays off). Also after every Steam download.",
+              "stalled_minutes": "A push comes when a running Steam job shows no progress this long (checked every 10 min, at most every 30 min).",
+              "link": "Dashboard path opened when a Steam push is tapped.",
+              "api_key": "Key from steamcommunity.com/dev/apikey. Used to list your owned games (not installed, new purchases).",
+              "steam_id": "SteamID64 (17 digits, starts with 7656), the address of your Steam profile, or the name from its custom profile URL (steamcommunity.com/id/yourname). Saved as SteamID64.",
+              "overflow_drive": "Only for new purchases installed by themselves or with the button of the purchase push: when the default Steam library (the star in Steam's storage settings) has no space for the game or its drive is not there, the game is installed here once instead, if it fits. The result push says so. A drive without a Steam library gets one. Games you install by hand never go here. The drive of the default library itself has no effect."
+            }
+          },
+          "active_hours": {
+            "name": "Active hours (automatic work)",
+            "data": {
+              "enabled": "Limit to active hours",
+              "start": "From",
+              "end": "Until"
+            },
+            "data_description": {
+              "enabled": "Automatic updates and the automatic install of new purchases start only in this time, and the PC is only switched on for them then. What comes up outside it waits and starts by itself when the time begins. Everything you start by hand runs at once. The checks for updates and purchases run at any time (the PC stays off).",
+              "start": "Start of the active hours. A time window may cross midnight (e.g. 22:00 to 06:00).",
+              "end": "End of the active hours. A job that is still running then is finished; queued automatic work waits for the next start. The same time as the start means all day."
+            }
+          }
+        }
+      },
+      "found": {
+        "title": "Found PC",
+        "description": "The Steam Engine agent of the PC \"{pc}\" (computer {computer}) reports to Home Assistant. Set it up? Its settings come next."
+      }
+    },
+    "error": {
+      "steam_both": "Enter both the Steam Web API key and the Steam ID, or neither.",
+      "invalid_api_key": "Steam rejects the Steam Web API key. Copy it again from steamcommunity.com/dev/apikey.",
+      "steam_id_not_found": "No Steam profile found for this Steam ID, address or name.",
+      "profile_private": "Steam shows no games for this profile. Set \"Game details\" to Public in the Steam privacy settings, and check the Steam ID.",
+      "cannot_connect": "Steam did not answer. Try again later, or enter the SteamID64.",
+      "notify_not_found": "There is no notify service with this name. Pick one from the list (the Companion app's is called mobile_app_ and the phone's name).",
+      "pc_name_invalid": "The name needs letters or digits.",
+      "pc_exists": "Steam Engine is set up for this PC already."
+    },
+    "abort": {
+      "already_configured": "Steam Engine is set up for this PC already.",
+      "not_supported": "This message is not from a Steam Engine agent.",
+      "already_in_progress": "This PC is being set up already."
+    },
+    "flow_title": "{name}"
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Steam Engine",
+        "description": "All Steam Engine settings. Changes apply when you submit; the integration reloads.",
+        "sections": {
+          "pc": {
+            "name": "PC",
+            "data": {
+              "reachable_entity": "PC reachable",
+              "wake_entity": "Turn on with",
+              "launch_unlocked": "Start games without the lock"
+            },
+            "data_description": {
+              "reachable_entity": "Binary sensor that is on while the PC is running, e.g. a Ping sensor.",
+              "wake_entity": "Button, switch or script that turns the PC on (Wake-on-LAN, smart plug, relay).",
+              "launch_unlocked": "Only when a game is started from Home Assistant while the PC is off: the PC is switched on and the lock after the automatic sign-in is left out once, so the game can start. Security trade-off: until you lock it, anyone at the PC can use it. The note for the PC is valid for 10 minutes."
+            }
+          },
+          "notify": {
+            "name": "Notifications",
+            "data": {
+              "notify_service": "Push to",
+              "push_kinds": "Pushes about",
+              "quiet_auto_updates": "Automatic updates quietly",
+              "link": "Link on tap"
+            },
+            "data_description": {
+              "notify_service": "Companion app notify service, e.g. mobile_app_yourphone (notify. in front is fine). \"No pushes\": nothing is sent; the events for your own automations stay.",
+              "push_kinds": "Answers to a button of a push (e.g. \"Delete?\") always come.",
+              "quiet_auto_updates": "Jobs of games with automatic updates push nothing while they run or when they went well. A push comes only when there was too little space, or when the second try failed too. The update push leaves them out.",
+              "link": "Dashboard path opened when the push is tapped."
+            }
+          },
+          "auto_off": {
+            "name": "Automatic shutdown (PC woken by an automation)",
+            "data": {
+              "idle_minutes": "Idle without mouse/keyboard",
+              "quiet_minutes": "Then stay quiet for",
+              "min_after_wake_minutes": "Not earlier than after wake",
+              "network_limit_kbs": "Network counts as quiet below"
+            },
+            "data_description": {
+              "idle_minutes": "From then on the PC is safe to shut down (if Steam is not downloading, no game runs and no plugin keeps it busy).",
+              "quiet_minutes": "It must stay safe this long without interruption before it shuts down.",
+              "min_after_wake_minutes": "Minimum runtime after waking.",
+              "network_limit_kbs": "More network traffic counts as use."
+            }
+          },
+          "idle_prompt": {
+            "name": "Idle prompt (PC switched on by hand)",
+            "data": {
+              "prompt_after_minutes": "Ask after idle of",
+              "after_download_minutes": "Wait after a download",
+              "after_game_minutes": "Wait after a game"
+            },
+            "data_description": {
+              "prompt_after_minutes": "Push with a shutdown button when mouse/keyboard were not used this long.",
+              "after_download_minutes": "Ask only this long after a Steam download ended.",
+              "after_game_minutes": "A running game counts as use (idle time does not see controllers)."
+            }
+          },
+          "reminder": {
+            "name": "Reminder while automatic shutdown is off",
+            "data": {
+              "after_hours": "Remind when off for",
+              "every_hours": "Repeat every"
+            },
+            "data_description": {
+              "after_hours": "Refers to the switch for automatic PC shutdown.",
+              "every_hours": "Checked on the full hour."
+            }
+          },
+          "steam": {
+            "name": "Steam",
+            "data": {
+              "check_every_hours": "Check every",
+              "stalled_minutes": "Download stalled after",
+              "link": "Link on tap",
+              "api_key": "Steam Web API key",
+              "steam_id": "Steam ID",
+              "overflow_drive": "Overflow drive"
+            },
+            "data_description": {
+              "check_every_hours": "Compares the installed games with the public build and depot manifests on Steam (the PC stays off). Also after every Steam download.",
+              "stalled_minutes": "A push comes when a running Steam job shows no progress this long (checked every 10 min, at most every 30 min).",
+              "link": "Dashboard path opened when a Steam push is tapped.",
+              "api_key": "Key from steamcommunity.com/dev/apikey. Used to list your owned games (not installed, new purchases).",
+              "steam_id": "SteamID64 (17 digits, starts with 7656), the address of your Steam profile, or the name from its custom profile URL (steamcommunity.com/id/yourname). Saved as SteamID64.",
+              "overflow_drive": "Only for new purchases installed by themselves or with the button of the purchase push: when the default Steam library (the star in Steam's storage settings) has no space for the game or its drive is not there, the game is installed here once instead, if it fits. The result push says so. A drive without a Steam library gets one. Games you install by hand never go here. The drive of the default library itself has no effect."
+            }
+          },
+          "active_hours": {
+            "name": "Active hours (automatic work)",
+            "data": {
+              "enabled": "Limit to active hours",
+              "start": "From",
+              "end": "Until"
+            },
+            "data_description": {
+              "enabled": "Automatic updates and the automatic install of new purchases start only in this time, and the PC is only switched on for them then. What comes up outside it waits and starts by itself when the time begins. Everything you start by hand runs at once. The checks for updates and purchases run at any time (the PC stays off).",
+              "start": "Start of the active hours. A time window may cross midnight (e.g. 22:00 to 06:00).",
+              "end": "End of the active hours. A job that is still running then is finished; queued automatic work waits for the next start. The same time as the start means all day."
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "steam_both": "Enter both the Steam Web API key and the Steam ID, or neither.",
+      "invalid_api_key": "Steam rejects the Steam Web API key. Copy it again from steamcommunity.com/dev/apikey.",
+      "steam_id_not_found": "No Steam profile found for this Steam ID, address or name.",
+      "profile_private": "Steam shows no games for this profile. Set \"Game details\" to Public in the Steam privacy settings, and check the Steam ID.",
+      "cannot_connect": "Steam did not answer. Try again later, or enter the SteamID64.",
+      "notify_not_found": "There is no notify service with this name. Pick one from the list (the Companion app's is called mobile_app_ and the phone's name)."
+    }
+  },
+  "services": {
+    "pc_wake": {
+      "name": "Wake PC",
+      "description": "Wakes the PC if it is off (marks it as woken by an automation, which allows the automatic shutdown) and waits until the Steam agent is ready. Response: woken, ready.",
+      "fields": {
+        "wait_for_entity": {
+          "name": "Also wait for",
+          "description": "Entity that must have a value before the service returns."
+        },
+        "wait_for_state": {
+          "name": "Required state",
+          "description": "If set, wait until the entity has exactly this state (e.g. on)."
+        },
+        "timeout_minutes": {
+          "name": "Maximum wait",
+          "description": "Minutes to wait at most."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "pc_shutdown_when_idle": {
+      "name": "Shut down PC when free",
+      "description": "Only for a PC an automation woke: waits until Steam, games and plugins are done and then shuts it down. Without a response variable the caller does not wait. Response: shutdown, reason.",
+      "fields": {
+        "max_wait_hours": {
+          "name": "Maximum wait",
+          "description": "Hours to wait at most."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "check_updates": {
+      "name": "Check Steam updates",
+      "description": "Compares the installed games with the public builds and depot manifests on api.steamcmd.net. Response: games (outdated), skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "install": {
+      "name": "Install or update game",
+      "description": "Hands the game to the Steam agent, waking the PC if needed. While a job runs it waits in the queue; a first install, or an update of the game being played, waits until the game is closed. Without a response variable the caller does not wait. Response: queued, sent, woken.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID, several separated by commas."
+        },
+        "drive": {
+          "name": "Drive",
+          "description": "Only for a first install: the letter of the drive to install to (e.g. E): its Steam library, or a new one the install creates on a drive without one. Empty: a drive stored for the game before (still queued) stays, otherwise Steam's default library (the star in Steam's storage settings); to go back to the default library, give its letter. An installed game stays where it is."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "uninstall": {
+      "name": "Uninstall game",
+      "description": "Uninstalls the game on the PC through the Steam agent, waking the PC if needed. Response: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "move": {
+      "name": "Move game",
+      "description": "Moves an installed game to the Steam library on another drive through the Steam agent, waking the PC if needed. A drive without a Steam library gets a new one. Steam is closed for a moment near the end; the old folder is deleted only once Steam has the game on the new drive. Not while a game runs or another Steam job runs. Without a response variable the caller does not wait. Response: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID of an installed game."
+        },
+        "drive": {
+          "name": "Drive",
+          "description": "The letter of the drive to move the game to (e.g. E)."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Sync now",
+      "description": "Asks the PC for its game library (when the agent is online), then checks for updates and new purchases. Response: library_refreshed, games (updates), skipped, new_purchases, owned_skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "check_owned": {
+      "name": "Check owned games",
+      "description": "Compares the owned games (Steam Web API) with the installed ones and reports new purchases. Response: games (not installed), new, skipped.",
+      "fields": {
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "launch": {
+      "name": "Launch game",
+      "description": "Starts an installed game on the PC through the Steam agent, waking the PC if needed; Steam starts first if it does not run. Not while a game runs. Response: sent, reason.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "set_auto_update": {
+      "name": "Automatic updates for a game",
+      "description": "Switches automatic updates for one game on or off. Without enabled it toggles. Response: appid, auto_update.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID."
+        },
+        "enabled": {
+          "name": "On",
+          "description": "On or off; leave out to toggle."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    },
+    "set_muted": {
+      "name": "Mute a game's updates",
+      "description": "Mutes the updates of one game or unmutes them: no update push, not counted by the updates sensor, its automatic updates stay quiet (failures are still pushed). Without enabled it toggles. Response: appid, muted.",
+      "fields": {
+        "appid": {
+          "name": "App ID",
+          "description": "Steam app ID."
+        },
+        "enabled": {
+          "name": "On",
+          "description": "Muted or not; leave out to toggle."
+        },
+        "pc": {
+          "name": "PC",
+          "description": "Only with several PCs on one Home Assistant: the name of the PC (as set on the PC). Empty: the only PC, or the PC without a name."
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "pc": {
+        "name": "PC"
+      },
+      "auto_off_enabled": {
+        "name": "Auto off"
+      },
+      "woken_by_automation": {
+        "name": "Woken by automation"
+      },
+      "auto_install_purchases": {
+        "name": "Install new purchases"
+      },
+      "auto_update_picked_game": {
+        "name": "Auto-update picked game"
+      }
+    },
+    "binary_sensor": {
+      "safe_to_shut_down": {
+        "name": "Safe to shut down"
+      },
+      "steam_busy": {
+        "name": "Steam busy"
+      },
+      "plugin_busy": {
+        "name": "Busy by plugin"
+      }
+    },
+    "button": {
+      "install_game": {
+        "name": "Install game"
+      },
+      "uninstall_game": {
+        "name": "Uninstall game"
+      },
+      "launch_game": {
+        "name": "Launch game"
+      }
+    },
+    "select": {
+      "game_to_install": {
+        "name": "Game to install"
+      },
+      "installed_game": {
+        "name": "Installed game"
+      }
+    },
+    "sensor": {
+      "pc_state": {
+        "name": "PC state",
+        "state": {
+          "off": "Off",
+          "starting": "Starting",
+          "on": "On",
+          "shutting_down": "Shutting down",
+          "restarting": "Restarting"
+        }
+      },
+      "updates": {
+        "name": "Updates",
+        "unit_of_measurement": "games"
+      },
+      "last_answer": {
+        "name": "Last answer"
+      },
+      "query": {
+        "name": "Query",
+        "state": {
+          "ok": "OK",
+          "stale": "No answer",
+          "never": "Never"
+        }
+      },
+      "not_installed": {
+        "name": "Games not installed",
+        "unit_of_measurement": "games"
+      },
+      "download_progress": {
+        "name": "Download progress"
+      },
+      "current_game": {
+        "name": "Current game"
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Steam Engine is not loaded for the PC (not set up, disabled, or starting again). Try again in a moment."
+    },
+    "no_game_picked": {
+      "message": "Pick a game first."
+    },
+    "game_running": {
+      "message": "A game is already running on the PC."
+    },
+    "moving": {
+      "message": "A game is being moved to another drive on the PC; Steam is closed for a moment then. Try again when it is done."
+    },
+    "no_wake_entity": {
+      "message": "No entity to switch the PC on is chosen (Steam Engine > Configure > PC)."
+    },
+    "pc_stays_on": {
+      "message": "The PC stays on: {reason}."
+    },
+    "unknown_pc": {
+      "message": "Steam Engine knows no PC named {pc} (PCs: {pcs})."
+    },
+    "pc_needed": {
+      "message": "There are several PCs ({pcs}): say which one in the field PC."
+    }
+  },
+  "issues": {
+    "agent_missing": {
+      "title": "{pc}The PC side of Steam Engine has not reported yet",
+      "description": "Home Assistant has not seen the Steam agent of the PC yet. Set up the PC side: unzip the SteamEngine-PC zip of the release (SteamEngine-PC-x.y.z.zip) on the gaming PC and double-click Install.cmd (see the README). Steam Engine reloads by itself within a minute after the agent's first start, and this message goes away."
+    },
+    "api_key_invalid": {
+      "title": "{pc}Steam rejects the Steam Web API key",
+      "description": "The owned games cannot be checked (games that are not installed, new purchases). Enter the key again under Settings > Devices & services > Steam Engine > Configure > Steam (from steamcommunity.com/dev/apikey). This message goes away after the next successful check."
+    },
+    "profile_private": {
+      "title": "{pc}Steam shows no games for the Steam profile",
+      "description": "The owned games cannot be checked. Set \"Game details\" to Public in the Steam privacy settings (steamcommunity.com/my/edit/settings), and check the Steam ID under Settings > Devices & services > Steam Engine > Configure > Steam. This message goes away after the next successful check (every hour)."
+    },
+    "steam_not_logged_on": {
+      "title": "{pc}The Steam client on the PC is not signed in",
+      "description": "A Steam job failed because the Steam client did not sign in when it started. On the PC, sign in to Steam with \"Remember me\" and leave offline mode, then start the job again. This message goes away after the next successful job."
+    },
+    "agent_not_running": {
+      "title": "{pc}The Steam agent does not run on the PC",
+      "description": "The PC has been reachable for {minutes} minutes, but the Steam agent has not reported, so Steam jobs and automatic shutdown do not work. On the PC, check the scheduled task \"Steam Engine Agent\" or run Install.cmd -Update. This message goes away once the agent reports."
+    }
+  },
+  "selector": {
+    "notify_service": {
+      "options": {
+        "none": "No pushes"
+      }
+    },
+    "push_kinds": {
+      "options": {
+        "progress": "Job started and progress",
+        "result": "Result of a job",
+        "updates": "New updates",
+        "purchases": "New purchases",
+        "uninstall": "Result of an uninstall (done or failed)",
+        "idle": "Idle PC (shut down?) and automatic shut down",
+        "reminder": "Reminder: auto off switched off",
+        "problems": "Problems (not enough space, stalled or aborted job, agent silent or not reachable, PC not shut down)"
+      }
+    },
+    "overflow_drive": {
+      "options": {
+        "none": "None"
+      }
+    }
+  }
+}

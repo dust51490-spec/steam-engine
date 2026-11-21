@@ -1,0 +1,78 @@
+{
+  "data": {
+    "286160": {
+      "depots": {
+        "228983": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "228984": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "228985": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "228989": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "286161": {
+          "config": {
+            "osarch": "64",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "1234074496",
+              "size": "2875813774"
+            }
+          }
+        },
+        "286162": {
+          "config": {
+            "osarch": "64",
+            "oslist": "macos"
+          },
+          "manifests": {
+            "public": {
+              "download": "1221416464",
+              "size": "2856108833"
+            }
+          }
+        },
+        "286163": {
+          "config": {
+            "osarch": "64",
+            "oslist": "linux"
+          },
+          "manifests": {
+            "public": {
+              "download": "1358123312",
+              "size": "3643300158"
+            }
+          }
+        },
+        "branches": {
+          "public": {
+            "buildid": "22252224"
+          }
+        }
+      }
+    }
+  },
+  "status": "success"
+}

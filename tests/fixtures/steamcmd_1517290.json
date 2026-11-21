@@ -1,0 +1,201 @@
+{
+  "data": {
+    "1517290": {
+      "depots": {
+        "1517291": {
+          "manifests": {
+            "public": {
+              "download": "103086860688",
+              "size": "109017762954"
+            }
+          }
+        },
+        "1517293": {
+          "config": {
+            "language": "english"
+          },
+          "manifests": {
+            "public": {
+              "download": "1012331408",
+              "size": "1122250331"
+            }
+          }
+        },
+        "1517294": {
+          "config": {
+            "language": "german"
+          },
+          "manifests": {
+            "public": {
+              "download": "877425024",
+              "size": "962257717"
+            }
+          }
+        },
+        "1517295": {
+          "config": {
+            "language": "french"
+          },
+          "manifests": {
+            "public": {
+              "download": "750787248",
+              "size": "832973637"
+            }
+          }
+        },
+        "1517296": {
+          "config": {
+            "language": "italian"
+          },
+          "manifests": {
+            "public": {
+              "download": "866061184",
+              "size": "944257836"
+            }
+          }
+        },
+        "1517297": {
+          "config": {
+            "language": "koreana"
+          },
+          "manifests": {
+            "public": {
+              "download": "1012820416",
+              "size": "1123013520"
+            }
+          }
+        },
+        "1517298": {
+          "config": {
+            "language": "spanish"
+          },
+          "manifests": {
+            "public": {
+              "download": "924842896",
+              "size": "1027002045"
+            }
+          }
+        },
+        "1517299": {
+          "config": {
+            "language": "schinese"
+          },
+          "manifests": {
+            "public": {
+              "download": "707208112",
+              "size": "776700229"
+            }
+          }
+        },
+        "1635824": {
+          "config": {
+            "language": "tchinese"
+          },
+          "manifests": {
+            "public": {
+              "download": "1012823136",
+              "size": "1122790835"
+            }
+          }
+        },
+        "1635825": {
+          "config": {
+            "language": "russian"
+          },
+          "manifests": {
+            "public": {
+              "download": "878512304",
+              "size": "965079773"
+            }
+          }
+        },
+        "1635826": {
+          "config": {
+            "language": "japanese"
+          },
+          "manifests": {
+            "public": {
+              "download": "808068720",
+              "size": "897205257"
+            }
+          }
+        },
+        "1635827": {
+          "config": {
+            "language": "polish"
+          },
+          "manifests": {
+            "public": {
+              "download": "797179744",
+              "size": "891712325"
+            }
+          }
+        },
+        "1635828": {
+          "config": {
+            "language": "arabic"
+          },
+          "manifests": {
+            "public": {
+              "download": "892360352",
+              "size": "969964003"
+            }
+          }
+        },
+        "1635829": {
+          "config": {
+            "language": "brazilian"
+          },
+          "manifests": {
+            "public": {
+              "download": "744950208",
+              "size": "820528959"
+            }
+          }
+        },
+        "1696392": {
+          "config": {
+            "language": "latam"
+          },
+          "manifests": {
+            "public": {
+              "download": "784181872",
+              "size": "862552402"
+            }
+          }
+        },
+        "228988": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "3340991": {
+          "depotfromapp": "3340990",
+          "manifests": {
+            "public": {
+              "download": "253708064",
+              "size": "254018335"
+            }
+          }
+        },
+        "3893181": {
+          "depotfromapp": "3893180",
+          "manifests": {
+            "public": {
+              "download": "334463536",
+              "size": "360861921"
+            }
+          }
+        },
+        "branches": {
+          "public": {
+            "buildid": "25313458"
+          }
+        }
+      }
+    }
+  },
+  "status": "success"
+}

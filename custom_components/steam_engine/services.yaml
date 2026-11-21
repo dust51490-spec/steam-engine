@@ -1,0 +1,154 @@
+pc_wake:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    wait_for_entity:
+      required: false
+      selector:
+        entity:
+    wait_for_state:
+      required: false
+      example: "on"
+      selector:
+        text:
+    timeout_minutes:
+      required: false
+      default: 6
+      selector:
+        number:
+          min: 1
+          max: 30
+          unit_of_measurement: min
+pc_shutdown_when_idle:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    max_wait_hours:
+      required: false
+      default: 6
+      selector:
+        number:
+          min: 1
+          max: 24
+          unit_of_measurement: h
+check_updates:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+check_owned:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+refresh:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+install:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+    drive:
+      required: false
+      example: "E"
+      selector:
+        text:
+          multiline: false
+uninstall:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+move:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+          multiline: false
+    drive:
+      required: true
+      example: "E"
+      selector:
+        text:
+          multiline: false
+launch:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+set_auto_update:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+    enabled:
+      required: false
+      selector:
+        boolean:
+
+set_muted:
+  fields:
+    pc:
+      required: false
+      example: "Kids PC"
+      selector:
+        text:
+    appid:
+      required: true
+      example: "440"
+      selector:
+        text:
+    enabled:
+      required: false
+      selector:
+        boolean:

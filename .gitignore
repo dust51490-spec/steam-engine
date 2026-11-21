@@ -1,0 +1,28 @@
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+.claude/
+
+# Local settings and credentials of the PC side, never commit
+*.local.psd1
+mqtt_credentials.txt
+settings.psd1
+plugins.psd1
+# Left in jobs by versions before 0.5 (account name of the removed SteamCMD login)
+steam_login.txt
+
+# Runtime files of the PC side (logs, backups, library and history data)
+*.log
+*.log.old
+*.bak_*
+history*.json*
+library_cache.json
+pending_manifest_cleanup.txt
+install.lock
+lock-at-logon.used
+install_final.json
+move_final.json
+announced_plugins.txt
+space_test_free_gb.txt
+task_backup/

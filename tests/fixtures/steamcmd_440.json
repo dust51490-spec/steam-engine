@@ -1,0 +1,125 @@
+{
+  "data": {
+    "440": {
+      "depots": {
+        "228990": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "232251": {
+          "config": {
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "418219920",
+              "size": "612239541"
+            }
+          }
+        },
+        "232252": {
+          "config": {
+            "oslist": "macos"
+          },
+          "manifests": {
+            "public": {
+              "download": "22586512",
+              "size": "103246051"
+            }
+          }
+        },
+        "232253": {
+          "config": {
+            "oslist": "linux"
+          },
+          "manifests": {
+            "public": {
+              "download": "333884960",
+              "size": "455328535"
+            }
+          }
+        },
+        "440": {
+          "manifests": {
+            "public": {
+              "download": "43168",
+              "size": "825745"
+            }
+          }
+        },
+        "441": {
+          "manifests": {
+            "public": {
+              "download": "16864821072",
+              "size": "32679290540"
+            }
+          }
+        },
+        "444": {
+          "config": {
+            "lowviolence": "1"
+          },
+          "manifests": {
+            "public": {
+              "download": "2986208",
+              "size": "7452052"
+            }
+          }
+        },
+        "445": {
+          "config": {
+            "language": "russian"
+          },
+          "manifests": {
+            "public": {
+              "download": "79353248",
+              "size": "90075889"
+            }
+          }
+        },
+        "446": {
+          "config": {
+            "language": "german"
+          },
+          "manifests": {
+            "public": {
+              "download": "65214128",
+              "size": "74594251"
+            }
+          }
+        },
+        "448": {
+          "config": {
+            "language": "french"
+          },
+          "manifests": {
+            "public": {
+              "download": "64158192",
+              "size": "73934506"
+            }
+          }
+        },
+        "449": {
+          "config": {
+            "language": "spanish"
+          },
+          "manifests": {
+            "public": {
+              "download": "58909344",
+              "size": "73947996"
+            }
+          }
+        },
+        "branches": {
+          "public": {
+            "buildid": "26334388"
+          }
+        }
+      }
+    }
+  },
+  "status": "success"
+}

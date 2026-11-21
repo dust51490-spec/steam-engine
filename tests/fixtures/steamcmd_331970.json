@@ -1,0 +1,92 @@
+{
+  "data": {
+    "331970": {
+      "depots": {
+        "228990": {
+          "config": {
+            "oslist": "windows"
+          },
+          "depotfromapp": "228980",
+          "sharedinstall": "1"
+        },
+        "331971": {
+          "config": {
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "307875608376",
+              "size": "552401426"
+            }
+          }
+        },
+        "331972": {
+          "config": {
+            "language": "english",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "1330483486157",
+              "size": "232763216"
+            }
+          }
+        },
+        "331973": {
+          "config": {
+            "language": "french",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "3357210269101",
+              "size": "187935139"
+            }
+          }
+        },
+        "331974": {
+          "config": {
+            "language": "italian",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "128437648768",
+              "size": "191115457"
+            }
+          }
+        },
+        "331975": {
+          "config": {
+            "language": "german",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "1358462012713",
+              "size": "189531107"
+            }
+          }
+        },
+        "331976": {
+          "config": {
+            "language": "russian",
+            "oslist": "windows"
+          },
+          "manifests": {
+            "public": {
+              "download": "1396742671991",
+              "size": "271522276"
+            }
+          }
+        },
+        "branches": {
+          "public": {
+            "buildid": "439689"
+          }
+        }
+      }
+    }
+  },
+  "status": "success"
+}
